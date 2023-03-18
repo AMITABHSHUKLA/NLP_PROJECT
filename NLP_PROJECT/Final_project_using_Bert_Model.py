@@ -30,7 +30,7 @@ def chatbot() :
         messagebox.showinfo(answer)
         
     finally : 
-        print("Sorry, I am unable to find the answer for you :(")
+        messagebox.showinfo("Thanks","Hope You got your answer Thank You!")
 
 
 def showcontext():
