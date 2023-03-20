@@ -1,5 +1,6 @@
 import tkinter
 from tkinter import *
+from tkinter import messagebox
 import wikipedia
 import transformers
 from transformers import pipeline
@@ -7,30 +8,32 @@ from transformers import BertTokenizer,BertForQuestionAnswering
 
 
 model_name = "deepset/bert-base-cased-squad2"
-tokernizer_A = BertTokenizer.from_pretrained(model_name)
-QA = BertForQuestionAnswering.from_pretrained(model_name)
-#QA = pipeline("question-answering" )
+tokenizer_A = BertTokenizer.from_pretrained(model_name)
+qa_model = BertForQuestionAnswering.from_pretrained(model_name)
+QA = pipeline("question-answering" , model = qa_model, tokenizer = tokenizer_A)
 
 def chatbot() :
     
     try :
-        question = query_input.get()
-        l1["text"] = "QUESTION :- " + question
-        print(question)
+        qes = query_input.get()
+        l1["text"] = "QUESTION :- " + qes
+        print(qes)
         print(context)
-        QA(question = question, context = context)
-        answer = QA(question = question, context = context)["answer"]
-        accuracy = QA(question = question, context = context)["score"]
+        QA(question = qes, context = context)
+        answer = str(QA(question = qes, context = context)["answer"])
+        accuracy = str(QA(question = qes, context = context)["score"])
+        print(answer)
+        
         result = "result"
         
         messagebox.showinfo(result,answer+"\nAccuracy:- "+accuracy)
         
     except : 
-        answer =  wikipedia.summary(query,sentences = 5)
-        messagebox.showinfo(answer)
+        answer =  wikipedia.summary(qes,sentences = 5)
+        messagebox.showinfo("Answer",answer)
         
     finally : 
-        messagebox.showinfo("Thanks","Hope You got your answer Thank You!")
+        l_a["text"] = "Answer :- " + answer
 
 
 def showcontext():
@@ -68,6 +71,10 @@ f1 = LabelFrame(fq,bg= "white")
 f1.pack()
 l1 = Label(f1,bg="sky blue",fg = "black",font= "Helvetica 14 bold",wraplength= 900)
 l1.pack()
+f_a = LabelFrame(fq,bg= "white")
+f_a.pack()
+l_a = Label(f_a,bg="sky blue",fg = "black",font= "Helvetica 14 bold",wraplength= 400)
+l_a.pack()
 #takes input
 #
 btn = Button(fq,text = "ENTER",bg="white",fg='black',padx=4,pady=4,borderwidth=6,command = chatbot)
